@@ -31,7 +31,6 @@ const db = firebase.firestore();
 
 const createThing = document.getElementById('createThing');
 const thingsList = document.getElementById('thingsList');
-
 let thingsRef;
 let unsubscribe;
 
@@ -47,5 +46,16 @@ auth.onAuthStateChanged(user => {
                 createdAt: serverTimestamp()
            });
        }
+       unsubscribe = thingsRef 
+       .where('uid', '==', user.uid)
+       .onSnapshot(QuerrySnapshot => {
+           const items = QuerrySnapshot.docs.map(doc => {
+                return `<li>${doc.data().name}</li>`
+           });
+           thingsList.innerHTML = items.join('');
+        });
+    }
+    else{ 
+        unsubscribe && unsubscribe();
     }
 })
